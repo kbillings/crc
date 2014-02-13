@@ -100,6 +100,8 @@ int main(int argc, char** argv) {
         uint16_t crc16out = 0;
         uint32_t crc32out = 0xFFFFFFFF;
 
+        printf("%s\n\n", name);
+
         while ((ch = fgetc(fp)) != EOF) {
             if (do16)
                 crc16out = crc16(crc16out, (uint8_t) ch);
@@ -110,7 +112,6 @@ int main(int argc, char** argv) {
         fclose(fp);
         
         crc32out ^= 0xFFFFFFFF;
-        printf("%s\n\n", name);
         if (do16)
             printf("CRC16 - %04X\n", crc16out);
         if (do32)
