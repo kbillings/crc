@@ -74,6 +74,35 @@ void print_usage() {
            "   --32  Use CRC32\n");
 }
 
+void calc(char* name, int do_crc16, int do_crc32) {
+    FILE* fp = fopen(name, "rb");
+
+    if (fp != NULL) {
+        int ch;
+        uint16_t crc16out = 0;
+        uint32_t crc32out = 0xFFFFFFFF;
+
+        printf("\n%s\n", name);
+
+        while ((ch = fgetc(fp)) != EOF) {
+            if (do_crc16)
+                crc16out = crc16(crc16out, ch);
+            if (do_crc32)
+                crc32out = crc32(crc32out, ch);
+        }
+
+        fclose(fp);
+        
+        crc32out ^= 0xFFFFFFFF;
+        if (do_crc16)
+            printf("CRC16 - %04X\n", crc16out);
+        if (do_crc32)
+            printf("CRC32 - %08lX\n", crc32out);
+    } else {
+        printf("\nCannot open file \"%s\"\n", name);
+    }
+}
+
 int main(int argc, char** argv) {
     if (argc < 2) {
         print_usage();
@@ -120,33 +149,7 @@ int main(int argc, char** argv) {
         init_crc32();
 
     for (int i = optind; i < argc; i++) {
-        char* name = argv[i];
-        FILE* fp = fopen(name, "rb");
-
-        if (fp != NULL) {
-            int ch;
-            uint16_t crc16out = 0;
-            uint32_t crc32out = 0xFFFFFFFF;
-
-            printf("\n%s\n", name);
-
-            while ((ch = fgetc(fp)) != EOF) {
-                if (do16)
-                    crc16out = crc16(crc16out, ch);
-                if (do32)
-                    crc32out = crc32(crc32out, ch);
-            }
-
-            fclose(fp);
-            
-            crc32out ^= 0xFFFFFFFF;
-            if (do16)
-                printf("CRC16 - %04X\n", crc16out);
-            if (do32)
-                printf("CRC32 - %08lX\n", crc32out);
-        } else {
-            printf("\nCannot open file \"%s\"\n", name);
-        }
+        calc(argv[i], do16, do32);
     }
 
     return 0;
