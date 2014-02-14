@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <unistd.h>
 
 static uint16_t crc16_table[256];
 static uint32_t crc32_table[256];
@@ -68,7 +69,7 @@ uint32_t crc32(uint32_t crc, uint8_t c) {
 
 int main(int argc, char** argv) {
     if (argc < 2 || argc > 3) {
-        printf("Usage: crc [-16|-32|-a] file\n\n");
+        printf("Usage: crc [--16|--32|-a] file\n\n");
         return 0;
     }
     
@@ -76,11 +77,11 @@ int main(int argc, char** argv) {
     uint8_t do16 = 0, do32 = 0;
 
     if (argc == 3) {
-        if (strcmp(argv[1], "-16") == 0) {
+        if (strcmp(argv[1], "--16") == 0) {
             do16 = 1;
-        } else if (strcmp(argv[1], "-32") == 0) {
+        } else if (strcmp(argv[1], "--32") == 0) {
             do32 = 1;
-        } else {
+        } else if (strcmp(argv[1], "-a"{
             do16 = 1;
             do32 = 1;
         }
@@ -90,8 +91,10 @@ int main(int argc, char** argv) {
         name = argv[1];
     }
 
-    init_crc16();
-    init_crc32();
+    if (do16)
+        init_crc16();
+    if (do32)
+        init_crc32();
 
     FILE* fp = fopen(name, "rb");
 
