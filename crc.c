@@ -132,9 +132,9 @@ int main(int argc, char** argv) {
 
             while ((ch = fgetc(fp)) != EOF) {
                 if (do16)
-                    crc16out = crc16(crc16out, (uint8_t) ch);
+                    crc16out = crc16(crc16out, ch);
                 if (do32)
-                    crc32out = crc32(crc32out, (uint8_t) ch);
+                    crc32out = crc32(crc32out, ch);
             }
 
             fclose(fp);
