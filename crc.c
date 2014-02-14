@@ -74,9 +74,7 @@ void print_usage() {
            "   --32  Use CRC32\n");
 }
 
-void calc(char* name, int do_crc16, int do_crc32) {
-    FILE* fp = fopen(name, "rb");
-
+void calc(FILE* fp, char* name, int do_crc16, int do_crc32) {
     if (fp != NULL) {
         int ch;
         uint16_t crc16out = 0;
@@ -149,7 +147,8 @@ int main(int argc, char** argv) {
         init_crc32();
 
     for (int i = optind; i < argc; i++) {
-        calc(argv[i], do16, do32);
+        FILE* fp = fopen(argv[i], "rb");
+        calc(fp, argv[i], do16, do32);
     }
 
     return 0;
