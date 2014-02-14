@@ -66,9 +66,17 @@ uint32_t crc32(uint32_t crc, uint8_t c) {
     return (crc >> 8) ^ crc32_table[tmp & 0xFF];
 }
 
+void print_usage() {
+    printf("Usage: crc [-a|--16|--32] file\n"
+           "\n"
+           "   -a    Use every type of CRC\n"
+           "   --16  Use CRC16\n"
+           "   --32  Use CRC32\n");
+}
+
 int main(int argc, char** argv) {
     if (argc < 2) {
-        printf("Usage: crc [-a|--16|--32] file\n");
+        print_usage();
         return 1;
     }
 
@@ -92,7 +100,7 @@ int main(int argc, char** argv) {
             no_args = 0;
             break;
         case '?':
-            printf("Usage: crc [-a|--16|--32] file\n");
+            print_usage();
             return 1;
         default:
             return 1;
@@ -102,7 +110,7 @@ int main(int argc, char** argv) {
     if (optind < argc) {
         name = argv[optind];
     } else {
-        printf("Usage: crc [-a|--16|--32] file\n");
+        print_usage();
         return 1;
     }
 
