@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <getopt.h>
+#include <sys/stat.h>
 
 static uint16_t crc16_table[256];
 static uint32_t crc32_table[256];
@@ -67,7 +68,7 @@ uint32_t crc32(uint32_t crc, uint8_t c) {
 }
 
 void print_usage() {
-    printf("Usage: crc [-a|--16|--32] file [file2] ...\n"
+    printf("Usage: crc [-a|--16|--32] [file] [file2] ...\n"
            "\n"
            "   -a    Use every type of CRC\n"
            "   --16  Use CRC16\n"
@@ -102,11 +103,6 @@ void calc(FILE* fp, char* name, int do_crc16, int do_crc32) {
 }
 
 int main(int argc, char** argv) {
-    if (argc < 2) {
-        print_usage();
-        return 1;
-    }
-
     int do16 = 0, do32 = 0;
 
     const struct option options[] = {
@@ -133,11 +129,6 @@ int main(int argc, char** argv) {
         }
     }
 
-    if (optind >= argc) {
-        print_usage();
-        return 1;
-    }
-
     if (no_args)
         do32 = 1;
 
@@ -146,6 +137,17 @@ int main(int argc, char** argv) {
     if (do32)
         init_crc32();
 
+    // Read data from stdin
+    struct stat stdin_stats;
+    fstat(0, &stdin_stats);
+    if (S_ISCHR(stdin_stats.st_mode)) {
+        print_usage();
+        return 1;
+    } else {
+        calc(stdin, "stdin", do16, do32);
+    }
+    
+    // Read data from files
     for (int i = optind; i < argc; i++) {
         FILE* fp = fopen(argv[i], "rb");
         calc(fp, argv[i], do16, do32);
