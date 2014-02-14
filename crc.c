@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
             do16 = 1;
         } else if (strcmp(argv[1], "--32") == 0) {
             do32 = 1;
-        } else if (strcmp(argv[1], "-a"{
+        } else if (strcmp(argv[1], "-a") == 0) {
             do16 = 1;
             do32 = 1;
         }
