@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
 #include <getopt.h>
 
 static uint16_t crc16_table[256];
