@@ -36,7 +36,7 @@ static void init_crc32() {
         uint32_t crc = i;
         for (int j = 0; j < 8; j++) {
             if (crc & 0x1)
-                crc = (crc >> 1) ^ 0xEDB88320L; // Polynomial
+                crc = (crc >> 1) ^ 0xEDB88320; // Polynomial
             else
                 crc = crc >> 1;
         }
