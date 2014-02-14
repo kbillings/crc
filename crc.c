@@ -103,12 +103,18 @@ void calc(FILE* fp, char* name, int do_crc16, int do_crc32) {
 }
 
 int main(int argc, char** argv) {
-    int do16 = 0, do32 = 0;
+    int do16 = 0, do32 = 0, help = 0;
 
     const struct option options[] = {
         {"16", optional_argument, &do16, 1},
-        {"32", optional_argument, &do32, 1}
+        {"32", optional_argument, &do32, 1},
+        {"help", optional_argument, &help, 1}
     };
+
+    if (help) {
+        print_usage();
+        return 0;
+    }
 
     int c, index, no_args = 1;
     while ((c = getopt_long(argc, argv, "a", options, &index)) != -1) {
