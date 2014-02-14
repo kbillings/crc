@@ -1,6 +1,6 @@
 /**
  * \file    crc.c
- * \version 1.0
+ * \version 1.1
  */
 
 #include <stdio.h>
