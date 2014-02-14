@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <unistd.h>
+#include <getopt.h>
 
 static uint16_t crc16_table[256];
 static uint32_t crc32_table[256];
@@ -68,31 +68,47 @@ uint32_t crc32(uint32_t crc, uint8_t c) {
 }
 
 int main(int argc, char** argv) {
-    if (argc < 2 || argc > 3) {
-        printf("Usage: crc [--16|--32|-a] file\n");
-        return 0;
+    if (argc < 2) {
+        printf("Usage: crc [-a|--16|--32] file\n");
+        return 1;
     }
-    
-    char* name;
-    uint8_t do16 = 0, do32 = 0;
 
-    if (argc == 3) {
-        if (strcmp(argv[1], "--16") == 0) {
+    int do16 = 0, do32 = 0;
+    char* name;
+
+    const struct option options[] = {
+        {"16", optional_argument, &do16, 1},
+        {"32", optional_argument, &do32, 1}
+    };
+
+    int c, index, no_args = 1;
+    while ((c = getopt_long(argc, argv, "a", options, &index)) != -1) {
+        switch (c) {
+        case 0:
+            no_args = 0;
+            break;
+        case 'a':
             do16 = 1;
-        } else if (strcmp(argv[1], "--32") == 0) {
             do32 = 1;
-        } else if (strcmp(argv[1], "-a") == 0) {
-            do16 = 1;
-            do32 = 1;
-        } else {
-            printf("Unknown argument '%s'.\n", argv[1]);
-            return 0;
+            no_args = 0;
+            break;
+        case '?':
+            printf("Usage: crc [-a|--16|--32] file\n");
+            return 1;
+        default:
+            return 1;
         }
-        name = argv[2];
-    } else {
-        do32 = 1;
-        name = argv[1];
     }
+
+    if (optind < argc) {
+        name = argv[optind];
+    } else {
+        printf("Usage: crc [-a|--16|--32] file\n");
+        return 1;
+    }
+
+    if (no_args)
+        do32 = 1;
 
     if (do16)
         init_crc16();
