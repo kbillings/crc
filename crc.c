@@ -69,7 +69,7 @@ uint32_t crc32(uint32_t crc, uint8_t c) {
 
 int main(int argc, char** argv) {
     if (argc < 2 || argc > 3) {
-        printf("Usage: crc [--16|--32|-a] file\n\n");
+        printf("Usage: crc [--16|--32|-a] file\n");
         return 0;
     }
     
@@ -84,6 +84,9 @@ int main(int argc, char** argv) {
         } else if (strcmp(argv[1], "-a") == 0) {
             do16 = 1;
             do32 = 1;
+        } else {
+            printf("Unknown argument '%s'.\n", argv[1]);
+            return 0;
         }
         name = argv[2];
     } else {
