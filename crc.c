@@ -67,7 +67,7 @@ uint32_t crc32(uint32_t crc, uint8_t c) {
 }
 
 void print_usage() {
-    printf("Usage: crc [-a|--16|--32] file\n"
+    printf("Usage: crc [-a|--16|--32] file [file2] ...\n"
            "\n"
            "   -a    Use every type of CRC\n"
            "   --16  Use CRC16\n"
@@ -81,7 +81,6 @@ int main(int argc, char** argv) {
     }
 
     int do16 = 0, do32 = 0;
-    char* name;
 
     const struct option options[] = {
         {"16", optional_argument, &do16, 1},
@@ -107,9 +106,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    if (optind < argc) {
-        name = argv[optind];
-    } else {
+    if (optind >= argc) {
         print_usage();
         return 1;
     }
@@ -122,32 +119,34 @@ int main(int argc, char** argv) {
     if (do32)
         init_crc32();
 
-    FILE* fp = fopen(name, "rb");
+    for (int i = optind; i < argc; i++) {
+        char* name = argv[i];
+        FILE* fp = fopen(name, "rb");
 
-    if (fp != NULL) {
-        int ch;
-        uint16_t crc16out = 0;
-        uint32_t crc32out = 0xFFFFFFFF;
+        if (fp != NULL) {
+            int ch;
+            uint16_t crc16out = 0;
+            uint32_t crc32out = 0xFFFFFFFF;
 
-        printf("%s\n\n", name);
+            printf("\n%s\n", name);
 
-        while ((ch = fgetc(fp)) != EOF) {
+            while ((ch = fgetc(fp)) != EOF) {
+                if (do16)
+                    crc16out = crc16(crc16out, (uint8_t) ch);
+                if (do32)
+                    crc32out = crc32(crc32out, (uint8_t) ch);
+            }
+
+            fclose(fp);
+            
+            crc32out ^= 0xFFFFFFFF;
             if (do16)
-                crc16out = crc16(crc16out, (uint8_t) ch);
+                printf("CRC16 - %04X\n", crc16out);
             if (do32)
-                crc32out = crc32(crc32out, (uint8_t) ch);
+                printf("CRC32 - %08lX\n", crc32out);
+        } else {
+            printf("\nCannot open file \"%s\"\n", name);
         }
-
-        fclose(fp);
-        
-        crc32out ^= 0xFFFFFFFF;
-        if (do16)
-            printf("CRC16 - %04X\n", crc16out);
-        if (do32)
-            printf("CRC32 - %08lX\n", crc32out);
-    } else {
-        fprintf(stderr, "Cannot open file \"%s\"\n", name);
-        return 1;
     }
 
     return 0;
