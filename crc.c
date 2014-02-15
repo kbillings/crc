@@ -143,20 +143,20 @@ int main(int argc, char** argv) {
     if (do32)
         init_crc32();
 
-    // Read data from stdin
-    struct stat stdin_stats;
-    fstat(0, &stdin_stats);
-    if (S_ISCHR(stdin_stats.st_mode)) {
-        print_usage();
-        return 1;
-    } else {
-        calc(stdin, "stdin", do16, do32);
-    }
-    
     // Read data from files
     for (int i = optind; i < argc; i++) {
         FILE* fp = fopen(argv[i], "rb");
         calc(fp, argv[i], do16, do32);
+    }
+
+    // Read data from stdin
+    struct stat stdin_stats;
+    fstat(0, &stdin_stats);
+    if (S_ISFIFO(stdin_stats.st_mode)) {
+        calc(stdin, "stdin", do16, do32);
+    } else if (optind == argc) {
+        print_usage();
+        return 1;
     }
 
     return 0;
