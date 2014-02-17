@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <getopt.h>
-#include <sys/stat.h>
 
 static uint16_t crc16_table[256];
 static uint32_t crc32_table[256];
@@ -70,10 +69,10 @@ uint32_t crc32(uint32_t crc, uint8_t c) {
 void print_usage() {
     printf("Usage: crc [-a|--16|--32] [file] [file2] ...\n"
            "\n"
-           "   -a      Use every type of CRC\n"
-           "   --16    Use CRC16\n"
-           "   --32    Use CRC32\n"
-           "   --stdin Pipe from stdin\n");
+           "   -a       Use every type of CRC\n"
+           "   --16     Use CRC16\n"
+           "   --32     Use CRC32\n"
+           "   --stdin  Pipe from stdin\n");
 }
 
 void calc(FILE* fp, char* name, int do_crc16, int do_crc32) {
