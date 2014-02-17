@@ -103,12 +103,13 @@ void calc(FILE* fp, char* name, int do_crc16, int do_crc32) {
 }
 
 int main(int argc, char** argv) {
-    int do16 = 0, do32 = 0, help = 0;
+    int do16 = 0, do32 = 0, help = 0, pipe = 0;
 
     const struct option options[] = {
         {"16", optional_argument, &do16, 1},
         {"32", optional_argument, &do32, 1},
-        {"help", optional_argument, &help, 1}
+        {"help", optional_argument, &help, 1},
+        {"stdin", optional_argument, &pipe, 1}
     };
 
     if (help) {
@@ -144,9 +145,7 @@ int main(int argc, char** argv) {
         init_crc32();
 
     // Read data from stdin
-    struct stat stdin_stats;
-    fstat(0, &stdin_stats);
-    if (S_ISFIFO(stdin_stats.st_mode)) {
+    if (pipe) {
         calc(stdin, "stdin", do16, do32);
     } else if (optind == argc) {
         print_usage();
