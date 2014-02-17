@@ -94,9 +94,9 @@ void calc(FILE* fp, char* name, int do_crc16, int do_crc32) {
         
         crc32out ^= 0xFFFFFFFF;
         if (do_crc16)
-            printf("CRC16 - %04X\n", crc16out);
+            printf("CRC16 - %X\n", crc16out);
         if (do_crc32)
-            printf("CRC32 - %08lX\n", crc32out);
+            printf("CRC32 - %X\n", crc32out);
     } else {
         printf("\nCannot open file \"%s\"\n", name);
     }
